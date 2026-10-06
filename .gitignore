@@ -39,5 +39,6 @@ imgui.ini
 # the scripts plus the Thingi10K download, so they stay out of git.
 /runs/
 /runs_thingi10k/
+/runs_targetrel/
 /verification_*/
 /build/
