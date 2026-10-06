@@ -238,6 +238,42 @@ vertices are exactly their input vertices. The tiny 100026 is the one case with
 a visible deviation (~7–9 %), which is what aggressive simplification of a
 117-vertex mesh looks like.
 
+### 5.6 Effect of the target ratio
+
+The sweeps above all use the default `target_rel = 0.1`. To see how the
+termination behaves away from the default, both components were re-run with
+`target_rel ∈ {0.5, 0.25, 0.1, 0.05, 0.01}` on the **first 800 models** (sorted
+by file name — a fixed subset, not a random sample). SEC used
+`remove_duplicate_eps=1e-5` and `use_link_condition=false`; qslim used its
+defaults apart from the target.
+
+| `target_rel` | qslim reached | SEC reached |
+| ---: | ---: | ---: |
+| 0.5 | 794 / 796 (99.7 %) | 794 / 796 (99.7 %) |
+| 0.25 | 786 / 796 (98.7 %) | 792 / 796 (99.5 %) |
+| 0.1 | 736 / 796 (92.5 %) | 784 / 796 (98.5 %) |
+| 0.05 | 666 / 796 (83.7 %) | 766 / 796 (96.2 %) |
+| 0.01 | 475 / 796 (59.7 %) | 624 / 796 (78.4 %) |
+
+Reading this together with §4: the stop rule itself is exact — a run that can
+perform the required number of collapses lands within one vertex of the target
+(median output/target ratio ≈ 1.0 at every setting). What changes with a
+smaller target is how often the mesh *runs out of legal collapses* first. qslim
+degrades faster than SEC-without-link-condition (59.7 % vs 78.4 % at 1 %),
+which is consistent with qslim always enforcing the link condition. So the
+practical limit on simplification here is the input's collapsibility, not the
+stopping criterion.
+
+Reproduce (one setting shown):
+
+```bash
+python3 run_component_sweep.py --application shortest_edge_collapse \
+    --input-dir /jizhi/jizhi2/worker/trainer/data/thingi10k/raw_meshes \
+    --out runs_targetrel/sec_0.01 --threads 4 --parallel 24 --timeout 600 \
+    --limit 800 --param target_rel=0.01 \
+    --param remove_duplicate_eps=1e-5 --param use_link_condition=false
+```
+
 ## 6. Known gaps
 
 - **`shortest_edge_collapse` writes no report file.** Its spec has no `report`
