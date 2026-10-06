@@ -33,3 +33,11 @@ CMakeCache.txt
 # Viewer state written into the repo root by polyscope / imgui at runtime
 .polyscope.ini
 imgui.ini
+
+# Sweep outputs written by run_component_sweep.py / verify_results.py.
+# These are tens of GB (10k models x several runs) and are reproducible from
+# the scripts plus the Thingi10K download, so they stay out of git.
+/runs/
+/runs_thingi10k/
+/verification_*/
+/build/
